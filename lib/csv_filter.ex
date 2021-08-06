@@ -24,25 +24,40 @@ defmodule CsvFilter do
 
   ## Examples
       iex> reduce_csv(file_path, output_file_path, unique: ["Email", "Phone"])
-      :ok
+      {
+        :ok,
+        [
+         %{
+           "" => ["", "", "", ""],
+           "Email" => "123@email.com",
+           "Name" => "John Doe 1",
+           "Phone" => "5555555555"
+         },
+          ...
+        ]
+      }
   """
-  # CsvFilter.reduce_csv("./test/data/users_sample.csv", "./test/data/output_sample.csv", unique: ["Email"])
-
   def reduce_csv(file_path, output_file_path, opts) when is_list(opts) do
     opts = Enum.into(opts, %{})
 
     output_file = File.open!(output_file_path, [:write, :utf8])
 
-    updated_file =
+    updated_content =
       file_path
       |> File.stream!()
       |> CSV.decode(headers: true)
       |> Stream.transform(nil, fn row, acc -> remove_duplicates(row, acc, opts) end)
-      |> CSV.encode(headers: true)
-      |> Enum.each(fn data -> IO.write(output_file, data) end)
-    #|> Enum.each(fn x -> IO.inspect(x) end)
 
-    :ok
+    errors? =
+      updated_content
+      |> CSV.encode(headers: true)
+      |> Stream.map(fn row -> IO.write(output_file, row) end)
+      |> Enum.any?(fn res -> res != :ok end)
+
+    cond do
+      !errors? -> {:ok, Enum.into(updated_content, [])}
+      true -> {:error, :failed_to_save}
+    end
   end
 
   # used inside Stream.transform/3
