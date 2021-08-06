@@ -38,7 +38,7 @@ defmodule CsvFilterTest do
   end
 
   def check_results({status, table}, expected_count) do
-    IO.inspect(table)
+    #IO.inspect(table)
     row_count = Enum.count(table)
     assert row_count == expected_count
     assert status == :ok
