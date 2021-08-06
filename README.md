@@ -1,6 +1,6 @@
 # CsvFilter
 
-Opens csv file as a stream, reads it, removes duplicates, and writes to new file.
+Opens csv file as a stream, reads it, removes any duplicates when specified as unique, and writes to new file.
 
   Unique headers can be passed in as a key-value pair options argument, currently this function only supports the `:unique` option.
 
@@ -9,7 +9,7 @@ Opens csv file as a stream, reads it, removes duplicates, and writes to new file
   - this would make sure the "Email" and "Phone" columns contain all unique values.
 
   Sets of headers can be passed in as well to enforce unique combinations.
-  - ex: unique: ["Email", ["Phone", "Name"]]
+  - ex: unique: `["Email", ["Phone", "Name"]]`
   - this would make sure that the "Email" column is unique, and also enforce that all "Name" and "Phone" pairs are unique combinations.
 
   Headers that are missing from the file will be ignored.
