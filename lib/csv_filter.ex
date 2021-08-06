@@ -55,8 +55,8 @@ defmodule CsvFilter do
       |> Enum.any?(fn res -> res != :ok end)
 
     cond do
-      !errors? -> {:ok, Enum.into(updated_content, [])}
-      true -> {:error, :failed_to_save}
+      errors? -> {:error, "Something went wrong..."}
+      true -> {:ok, Enum.into(updated_content, [])}
     end
   end
 
