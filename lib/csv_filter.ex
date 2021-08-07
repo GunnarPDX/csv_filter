@@ -66,7 +66,21 @@ defmodule CsvFilter do
   end
 
   defp filter_duplicates(table, %{unique: header_opts}) do
+    required_fields =
+      header_opts
+      |> List.flatten()
+      |> Enum.uniq()
+
+    table = Enum.reject(table, fn row -> missing_required_fields?(row, required_fields) end)
+
     Enum.reduce(header_opts, table, fn h, acc -> dedupe(acc, h) end)
+  end
+
+  defp missing_required_fields?(row, required_fields) do
+    Enum.any?(required_fields, fn f ->
+      row_value = Map.get(row, f)
+      row_value == nil || row_value == ""
+    end)
   end
 
   def dedupe(table, unique_header_set) when is_list(unique_header_set) do
