@@ -66,6 +66,7 @@ defmodule CsvFilter do
   defp remove_duplicates({:error, _}, unique_store, _), do: {[], unique_store}
   defp remove_duplicates({:ok, row}, nil, %{unique: headers}), do: {[row], map_headers(headers, row)}
   defp remove_duplicates({:ok, row}, unique_store, %{unique: headers}) do
+    # loop through unique headers and check each, if everything is valid then {true, updated_unique_store} is returned
     case Enum.reduce(headers, {true, unique_store}, fn header, acc -> check_unique_constraint(row, header, acc) end) do
       {true, updated_unique_store} -> {[row], updated_unique_store}
       {false, updated_unique_store} -> {[], updated_unique_store}
